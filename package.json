@@ -3,10 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "watch": "tsc --watch",
+    "dev": "concurrently \"npm run watch\" \"nodemon dist/app.js\""
   },
   "dependencies": {
+    "@types/morgan": "^1.9.9",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -17,6 +20,13 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.4"
+    "@types/cookie-parser": "^1.4.7",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.5.0",
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.4",
+    "prisma": "^5.18.0",
+    "typescript": "^5.5.4"
   }
 }

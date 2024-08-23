@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+// 1. User Model: Defines users of the application.
+
+model User {
+  id        String @id @default(cuid())
+  email     String @unique 
+  password  String 
+  name      String 
+  createdAt DateTime @default(now())
+  
+  // Relationships
+  shoppingLists UserShoppingList[]
+  ownedLists    ShoppingList[]
+}
+
+// 2. ShoppingList Model: Represents a shopping list that users can create and manage.
+
+model ShoppingList {
+  id        String @id @default(cuid())
+  name      String @db.VarChar(100)
+  ownerId   String
+  owner     User   @relation(fields: [ownerId], references: [id])
+  createdAt DateTime @default(now())
+  
+  // Relationships
+  items      Item[]
+  users      UserShoppingList[]
+}
+
+// 3. Item Model: Defines individual items within a shopping list.
+
+model Item {
+  id              String @id @default(cuid())
+  name            String
+  quantity        Int
+  shoppingList    ShoppingList @relation(fields: [shoppingListId], references: [id])
+  shoppingListId  String
+}
+
+// 4. UserShoppingList Model: Manages the many-to-many relationship between users and shopping lists.
+
+model UserShoppingList {
+  userId         String
+  shoppingListId String
+  
+  // Relationships
+  user          User       @relation(fields: [userId], references: [id])
+  shoppingList  ShoppingList @relation(fields: [shoppingListId], references: [id])
+  
+  @@id([userId, shoppingListId]) // Composite primary key
+}
