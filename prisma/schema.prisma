@@ -24,7 +24,7 @@ model User {
   createdAt DateTime @default(now())
   
   // Relationships
-  shoppingLists UserShoppingList[]
+  shoppingLists UserShoppingListLink[]
   ownedLists    ShoppingList[]
 }
 
@@ -39,7 +39,7 @@ model ShoppingList {
   
   // Relationships
   items      Item[]
-  users      UserShoppingList[]
+  users      UserShoppingListLink[]
 }
 
 // 3. Item Model: Defines individual items within a shopping list.
@@ -54,7 +54,7 @@ model Item {
 
 // 4. UserShoppingList Model: Manages the many-to-many relationship between users and shopping lists.
 
-model UserShoppingList {
+model UserShoppingListLink {
   userId         String
   shoppingListId String
   

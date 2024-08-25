@@ -7,6 +7,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // https://www.npmjs.com/package/dotenv
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
+// ℹ️ Connects to the database
+// import { prisma } from "./db/index";
 // Handles http requests (express is node js framework)
 // https://www.npmjs.com/package/express
 const express_1 = __importDefault(require("express"));
@@ -17,6 +19,12 @@ const config_1 = __importDefault(require("./config"));
 // 👇 Start handling routes here
 const index_routes_1 = __importDefault(require("./routes/index.routes"));
 app.use("/", index_routes_1.default);
+const user_routes_1 = __importDefault(require("./routes/user.routes"));
+app.use("/", user_routes_1.default);
+const shoppingList_routes_1 = __importDefault(require("./routes/shoppingList.routes"));
+app.use("/", shoppingList_routes_1.default);
+const item_routes_1 = __importDefault(require("./routes/item.routes"));
+app.use("/", item_routes_1.default);
 // import authRoutes from "./routes/auth.routes";
 // app.use("/auth", authRoutes);
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes

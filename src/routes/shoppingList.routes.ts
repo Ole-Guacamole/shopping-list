@@ -38,7 +38,7 @@ router.post('/shopping-lists/:listId/users', async (req: Request, res: Response,
   const { listId } = req.params;
   const { userId } = req.body;
   try {
-    const userShoppingList = await prisma.userShoppingList.create({
+    const userShoppingList = await prisma.userShoppingListLink.create({
       data: {
         userId,
         shoppingListId: listId,

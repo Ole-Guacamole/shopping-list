@@ -22,18 +22,19 @@ import indexRoutes from "./routes/index.routes";
 app.use("/", indexRoutes);
 
 import userRoutes from "./routes/user.routes";
-app.use("/users", userRoutes);
+app.use("/", userRoutes);
 
 import shoppingListRoutes from "./routes/shoppingList.routes";
-app.use("/shopping-lists", shoppingListRoutes);
+app.use("/", shoppingListRoutes);
 
 import itemRoutes from "./routes/item.routes";
-app.use("/items", itemRoutes);
+app.use("/", itemRoutes);
+
+import userShoppingListLinkRoutes from "./routes/userShoppingListLink.routes";
+app.use("/", userShoppingListLinkRoutes);
 
 // import authRoutes from "./routes/auth.routes";
 // app.use("/auth", authRoutes);
-
-
 
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
 import errorHandling from "./error-handling/";
