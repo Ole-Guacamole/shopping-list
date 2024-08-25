@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // ℹ️ Connects to the database
-
+// import { prisma } from "./db/index";
 
 // Handles http requests (express is node js framework)
 // https://www.npmjs.com/package/express
@@ -17,6 +17,19 @@ import config from "./config";
 config(app);
 
 // 👇 Start handling routes here
+
+import indexRoutes from "./routes/index.routes";
+app.use("/", indexRoutes);
+
+import userRoutes from "./routes/user.routes";
+app.use("/users", userRoutes);
+
+import shoppingListRoutes from "./routes/shoppingList.routes";
+app.use("/shopping-lists", shoppingListRoutes);
+
+import itemRoutes from "./routes/item.routes";
+app.use("/items", itemRoutes);
+
 // import authRoutes from "./routes/auth.routes";
 // app.use("/auth", authRoutes);
 

@@ -7,7 +7,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // https://www.npmjs.com/package/dotenv
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-// ℹ️ Connects to the database
 // Handles http requests (express is node js framework)
 // https://www.npmjs.com/package/express
 const express_1 = __importDefault(require("express"));
@@ -16,6 +15,8 @@ const app = (0, express_1.default)();
 const config_1 = __importDefault(require("./config"));
 (0, config_1.default)(app);
 // 👇 Start handling routes here
+const index_routes_1 = __importDefault(require("./routes/index.routes"));
+app.use("/", index_routes_1.default);
 // import authRoutes from "./routes/auth.routes";
 // app.use("/auth", authRoutes);
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes

@@ -2,13 +2,15 @@
   "name": "shopping-list-server",
   "version": "0.0.0",
   "private": true,
-  "scripts": {
-    "build": "tsc",
-    "start": "node dist/app.js",
-    "watch": "tsc --watch",
-    "dev": "concurrently \"npm run watch\" \"nodemon dist/app.js\""
-  },
+ "scripts": {
+  "build": "tsc",
+  "start": "node dist/server.js",
+  "watch": "tsc --watch",
+  "dev": "nodemon --watch dist --ext js --exec node dist/server.js",
+  "start-dev": "concurrently \"npm run watch\" \"npm run dev\""
+},
   "dependencies": {
+    "@prisma/client": "^5.18.0",
     "@types/morgan": "^1.9.9",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
@@ -27,6 +29,7 @@
     "concurrently": "^8.2.2",
     "nodemon": "^3.1.4",
     "prisma": "^5.18.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
   }
 }
