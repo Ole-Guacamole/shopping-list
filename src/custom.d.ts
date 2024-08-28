@@ -5,3 +5,15 @@ declare module 'express-serve-static-core' {
     payload?: any; // Adjust the type as needed
   }
 }
+
+declare module 'bcrypt';
+
+// declare namespace Express {
+//   interface IUser {
+//     email: string;
+//     name: string;
+//     id: string;
+//     password?: string;
+//     createdAt: string;
+//   }
+// }

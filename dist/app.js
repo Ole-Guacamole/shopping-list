@@ -25,8 +25,10 @@ const shoppingList_routes_1 = __importDefault(require("./routes/shoppingList.rou
 app.use("/", shoppingList_routes_1.default);
 const item_routes_1 = __importDefault(require("./routes/item.routes"));
 app.use("/", item_routes_1.default);
-// import authRoutes from "./routes/auth.routes";
-// app.use("/auth", authRoutes);
+const userShoppingListLink_routes_1 = __importDefault(require("./routes/userShoppingListLink.routes"));
+app.use("/", userShoppingListLink_routes_1.default);
+const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
+app.use("/auth", auth_routes_1.default);
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
 const error_handling_1 = __importDefault(require("./error-handling/"));
 (0, error_handling_1.default)(app);

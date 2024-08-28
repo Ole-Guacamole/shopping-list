@@ -72,4 +72,22 @@ router.put('/items/:id', (req, res, next) => __awaiter(void 0, void 0, void 0, f
         next(error); // Pass the error to the error-handling middleware
     }
 }));
+// Delete an item by ID
+router.delete('/items/:id', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        const deletedItem = yield db_1.prisma.item.delete({
+            where: { id },
+        });
+        res.status(200).json(deletedItem);
+    }
+    catch (error) {
+        if (error.code === 'P2025') { // Prisma error code for record not found
+            res.status(404).json({ error: 'Item not found' });
+        }
+        else {
+            next(error); // Pass the error to the error-handling middleware
+        }
+    }
+}));
 exports.default = router;

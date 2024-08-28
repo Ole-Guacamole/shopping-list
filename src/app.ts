@@ -33,8 +33,8 @@ app.use("/", itemRoutes);
 import userShoppingListLinkRoutes from "./routes/userShoppingListLink.routes";
 app.use("/", userShoppingListLinkRoutes);
 
-// import authRoutes from "./routes/auth.routes";
-// app.use("/auth", authRoutes);
+import authRoutes from "./routes/auth.routes";
+app.use("/auth", authRoutes);
 
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
 import errorHandling from "./error-handling/";

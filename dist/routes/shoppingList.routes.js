@@ -42,12 +42,24 @@ router.get('/users/:userId/shopping-lists', (req, res, next) => __awaiter(void 0
         next(error); // Pass the error to the error-handling middleware
     }
 }));
+// Get all shopping lists
+router.get('/shopping-lists', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const shoppingLists = yield db_1.prisma.shoppingList.findMany({
+            include: { items: true, users: true },
+        });
+        res.status(200).json(shoppingLists);
+    }
+    catch (error) {
+        next(error); // Pass the error to the error-handling middleware
+    }
+}));
 // Add a user to a shopping list
 router.post('/shopping-lists/:listId/users', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { listId } = req.params;
     const { userId } = req.body;
     try {
-        const userShoppingList = yield db_1.prisma.userShoppingList.create({
+        const userShoppingList = yield db_1.prisma.userShoppingListLink.create({
             data: {
                 userId,
                 shoppingListId: listId,
@@ -84,6 +96,47 @@ router.get('/shopping-lists/:listId/items', (req, res, next) => __awaiter(void 0
         res.status(200).json(items);
     }
     catch (error) {
+        next(error); // Pass the error to the error-handling middleware
+    }
+}));
+// Get shopping list details along with items
+router.get('/shopping-lists/:listId', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { listId } = req.params;
+    console.log('listId:', listId);
+    try {
+        const shoppingList = yield db_1.prisma.shoppingList.findUnique({
+            where: { id: listId },
+            include: { items: true },
+        });
+        if (shoppingList) {
+            res.status(200).json(shoppingList);
+        }
+        else {
+            res.status(404).json({ error: 'Shopping list not found' });
+        }
+    }
+    catch (error) {
+        console.error(`Error fetching shopping list with ID ${listId}:`, error);
+        next(error); // Pass the error to the error-handling middleware
+    }
+}));
+// Get all users a specific shopping list is shared with
+router.get('/shopping-lists/:listId/shared-users', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { listId } = req.params;
+    try {
+        const users = yield db_1.prisma.user.findMany({
+            where: {
+                shoppingLists: {
+                    some: {
+                        shoppingListId: listId,
+                    },
+                },
+            },
+        });
+        res.status(200).json(users);
+    }
+    catch (error) {
+        console.error(`Error fetching users for shopping list with ID ${listId}:`, error);
         next(error); // Pass the error to the error-handling middleware
     }
 }));

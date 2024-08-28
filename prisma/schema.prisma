@@ -47,7 +47,7 @@ model ShoppingList {
 model Item {
   id              String @id @default(cuid())
   name            String
-  quantity        Int
+  quantity        String?
   shoppingList    ShoppingList @relation(fields: [shoppingListId], references: [id])
   shoppingListId  String
 }

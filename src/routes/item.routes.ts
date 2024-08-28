@@ -62,4 +62,21 @@ router.put('/items/:id', async (req: Request, res: Response, next: NextFunction)
   }
 });
 
+// Delete an item by ID
+router.delete('/items/:id', async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+  try {
+    const deletedItem = await prisma.item.delete({
+      where: { id },
+    });
+    res.status(200).json(deletedItem);
+  } catch (error) {
+    if ((error as any).code === 'P2025') { // Prisma error code for record not found
+      res.status(404).json({ error: 'Item not found' });
+    } else {
+      next(error); // Pass the error to the error-handling middleware
+    }
+  }
+});
+
 export default router;

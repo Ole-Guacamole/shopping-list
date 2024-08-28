@@ -51,4 +51,22 @@ router.get('/user-shopping-list-links/:userId/:shoppingListId', async (req: Requ
   }
 });
 
+// Delete a UserShoppingListLink entry by userId and shoppingListId
+router.delete('/user-shopping-list-links/:userId/:shoppingListId', async (req: Request, res: Response, next: NextFunction) => {
+  const { userId, shoppingListId } = req.params;
+  try {
+    const deletedLink = await prisma.userShoppingListLink.delete({
+      where: {
+        userId_shoppingListId: {
+          userId,
+          shoppingListId,
+        },
+      },
+    });
+    res.status(200).json(deletedLink);
+  } catch (error) {
+    next(error); // Pass the error to the error-handling middleware
+  }
+});
+
 export default router;

@@ -33,6 +33,18 @@ router.get('/users/:userId/shopping-lists', async (req: Request, res: Response, 
   }
 });
 
+// Get all shopping lists
+router.get('/shopping-lists', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const shoppingLists = await prisma.shoppingList.findMany({
+      include: { items: true, users: true },
+    });
+    res.status(200).json(shoppingLists);
+  } catch (error) {
+    next(error); // Pass the error to the error-handling middleware
+  }
+});
+
 // Add a user to a shopping list
 router.post('/shopping-lists/:listId/users', async (req: Request, res: Response, next: NextFunction) => {
   const { listId } = req.params;
@@ -74,6 +86,46 @@ router.get('/shopping-lists/:listId/items', async (req: Request, res: Response, 
     });
     res.status(200).json(items);
   } catch (error) {
+    next(error); // Pass the error to the error-handling middleware
+  }
+});
+
+// Get shopping list details along with items
+router.get('/shopping-lists/:listId', async (req: Request, res: Response, next: NextFunction) => {
+  const { listId } = req.params;
+  console.log('listId:', listId);
+  try {
+    const shoppingList = await prisma.shoppingList.findUnique({
+      where: { id: listId },
+      include: { items: true },
+    });
+    if (shoppingList) {
+      res.status(200).json(shoppingList);
+    } else {
+      res.status(404).json({ error: 'Shopping list not found' });
+    }
+  } catch (error) {
+    console.error(`Error fetching shopping list with ID ${listId}:`, error);
+    next(error); // Pass the error to the error-handling middleware
+  }
+});
+
+// Get all users a specific shopping list is shared with
+router.get('/shopping-lists/:listId/shared-users', async (req: Request, res: Response, next: NextFunction) => {
+  const { listId } = req.params;
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        shoppingLists: {
+          some: {
+            shoppingListId: listId,
+          },
+        },
+      },
+    });
+    res.status(200).json(users);
+  } catch (error) {
+    console.error(`Error fetching users for shopping list with ID ${listId}:`, error);
     next(error); // Pass the error to the error-handling middleware
   }
 });
