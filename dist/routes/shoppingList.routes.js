@@ -28,20 +28,6 @@ router.post('/shopping-lists', (req, res, next) => __awaiter(void 0, void 0, voi
         next(error); // Pass the error to the error-handling middleware
     }
 }));
-// Get all shopping lists for a user
-router.get('/users/:userId/shopping-lists', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { userId } = req.params;
-    try {
-        const shoppingLists = yield db_1.prisma.shoppingList.findMany({
-            where: { ownerId: userId },
-            include: { items: true, users: true },
-        });
-        res.status(200).json(shoppingLists);
-    }
-    catch (error) {
-        next(error); // Pass the error to the error-handling middleware
-    }
-}));
 // Get all shopping lists
 router.get('/shopping-lists', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -68,7 +54,7 @@ router.post('/shopping-lists/:listId/users', (req, res, next) => __awaiter(void 
         res.status(201).json(userShoppingList);
     }
     catch (error) {
-        next(error); // Pass the error to the error-handling middleware
+        next(error); // Pass the error to the error-handling 
     }
 }));
 // Edit a shopping list
@@ -137,6 +123,39 @@ router.get('/shopping-lists/:listId/shared-users', (req, res, next) => __awaiter
     }
     catch (error) {
         console.error(`Error fetching users for shopping list with ID ${listId}:`, error);
+        next(error); // Pass the error to the error-handling middleware
+    }
+}));
+// Delete a specific shopping list by ID
+router.delete('/shopping-lists/:listId', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { listId } = req.params;
+    try {
+        console.log(`Deleting user shopping list links for shopping list with ID ${listId}`);
+        // Delete related UserShoppingListLink entries first
+        yield db_1.prisma.userShoppingListLink.deleteMany({
+            where: {
+                shoppingListId: listId,
+            },
+        });
+        console.log(`Deleted user shopping list links for shopping list with ID ${listId}`);
+        // Delete related items
+        yield db_1.prisma.item.deleteMany({
+            where: {
+                shoppingListId: listId,
+            },
+        });
+        console.log(`Deleted items for shopping list with ID ${listId}`);
+        // Delete the shopping list
+        const deletedList = yield db_1.prisma.shoppingList.delete({
+            where: {
+                id: listId,
+            },
+        });
+        console.log(`Deleted shopping list with ID ${listId}`);
+        res.status(200).json(deletedList);
+    }
+    catch (error) {
+        console.error(`Error deleting shopping list with ID ${listId}:`, error);
         next(error); // Pass the error to the error-handling middleware
     }
 }));

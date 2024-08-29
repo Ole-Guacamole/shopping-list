@@ -83,4 +83,53 @@ router.delete('/users/:id', (req, res, next) => __awaiter(void 0, void 0, void 0
         next(error); // Pass the error to the error-handling middleware
     }
 }));
+// Get all shopping lists for a user
+router.get('/users/:userId/shopping-lists', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userId } = req.params;
+    try {
+        const shoppingLists = yield db_1.prisma.shoppingList.findMany({
+            where: { ownerId: userId },
+            include: { items: true, users: true },
+        });
+        res.status(200).json(shoppingLists);
+    }
+    catch (error) {
+        next(error); // Pass the error to the error-handling middleware
+    }
+}));
+// Get all shopping lists shared with a user by user ID
+router.get('/users/:userId/shared-shopping-lists', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userId } = req.params;
+    try {
+        console.log(`Fetching shopping list links for user with ID ${userId}`);
+        // First, find the links in UserShoppingListLink that reference the user
+        const userShoppingListLinks = yield db_1.prisma.userShoppingListLink.findMany({
+            where: {
+                userId: userId,
+            },
+        });
+        console.log(`Found userShoppingListLinks:`, userShoppingListLinks);
+        // Extract the shoppingListIds from the links
+        const shoppingListIds = userShoppingListLinks.map(link => link.shoppingListId);
+        console.log(`Extracted shoppingListIds:`, shoppingListIds);
+        // Fetch the shopping lists based on the extracted shoppingListIds
+        const shoppingLists = yield db_1.prisma.shoppingList.findMany({
+            where: {
+                id: {
+                    in: shoppingListIds,
+                },
+            },
+            include: {
+                owner: true,
+                items: true,
+            },
+        });
+        console.log(`Found shoppingLists:`, shoppingLists);
+        res.status(200).json(shoppingLists);
+    }
+    catch (error) {
+        console.error(`Error fetching shopping lists for user with ID ${userId}:`, error);
+        next(error); // Pass the error to the error-handling middleware
+    }
+}));
 exports.default = router;

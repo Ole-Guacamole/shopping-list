@@ -19,19 +19,7 @@ router.post('/shopping-lists', async (req: Request, res: Response, next: NextFun
   }
 });
 
-// Get all shopping lists for a user
-router.get('/users/:userId/shopping-lists', async (req: Request, res: Response, next: NextFunction) => {
-  const { userId } = req.params;
-  try {
-    const shoppingLists = await prisma.shoppingList.findMany({
-      where: { ownerId: userId },
-      include: { items: true, users: true },
-    });
-    res.status(200).json(shoppingLists);
-  } catch (error) {
-    next(error); // Pass the error to the error-handling middleware
-  }
-});
+
 
 // Get all shopping lists
 router.get('/shopping-lists', async (req: Request, res: Response, next: NextFunction) => {
@@ -58,7 +46,7 @@ router.post('/shopping-lists/:listId/users', async (req: Request, res: Response,
     });
     res.status(201).json(userShoppingList);
   } catch (error) {
-    next(error); // Pass the error to the error-handling middleware
+    next(error); // Pass the error to the error-handling 
   }
 });
 
@@ -129,5 +117,46 @@ router.get('/shopping-lists/:listId/shared-users', async (req: Request, res: Res
     next(error); // Pass the error to the error-handling middleware
   }
 });
+
+// Delete a specific shopping list by ID
+router.delete('/shopping-lists/:listId', async (req: Request, res: Response, next: NextFunction) => {
+  const { listId } = req.params;
+  try {
+    console.log(`Deleting user shopping list links for shopping list with ID ${listId}`);
+    
+    // Delete related UserShoppingListLink entries first
+    await prisma.userShoppingListLink.deleteMany({
+      where: {
+        shoppingListId: listId,
+      },
+    });
+
+    console.log(`Deleted user shopping list links for shopping list with ID ${listId}`);
+
+    // Delete related items
+    await prisma.item.deleteMany({
+      where: {
+        shoppingListId: listId,
+      },
+    });
+
+    console.log(`Deleted items for shopping list with ID ${listId}`);
+
+    // Delete the shopping list
+    const deletedList = await prisma.shoppingList.delete({
+      where: {
+        id: listId,
+      },
+    });
+
+    console.log(`Deleted shopping list with ID ${listId}`);
+
+    res.status(200).json(deletedList);
+  } catch (error) {
+    console.error(`Error deleting shopping list with ID ${listId}:`, error);
+    next(error); // Pass the error to the error-handling middleware
+  }
+});
+
 
 export default router;
