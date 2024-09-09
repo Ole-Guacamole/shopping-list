@@ -13,9 +13,13 @@ const express_1 = require("express");
 const db_1 = require("../db");
 const router = (0, express_1.Router)();
 // Create a new shopping list
-router.post('/shopping-lists', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/shopping-lists", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, ownerId } = req.body;
     try {
+        // Validate that the name is provided
+        if (!name) {
+            return res.status(400).json({ error: "Name is required" });
+        }
         const shoppingList = yield db_1.prisma.shoppingList.create({
             data: {
                 name,
@@ -29,7 +33,7 @@ router.post('/shopping-lists', (req, res, next) => __awaiter(void 0, void 0, voi
     }
 }));
 // Get all shopping lists
-router.get('/shopping-lists', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/shopping-lists", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const shoppingLists = yield db_1.prisma.shoppingList.findMany({
             include: { items: true, users: true },
@@ -41,7 +45,7 @@ router.get('/shopping-lists', (req, res, next) => __awaiter(void 0, void 0, void
     }
 }));
 // Add a user to a shopping list
-router.post('/shopping-lists/:listId/users', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/shopping-lists/:listId/users", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { listId } = req.params;
     const { userId } = req.body;
     try {
@@ -54,11 +58,11 @@ router.post('/shopping-lists/:listId/users', (req, res, next) => __awaiter(void 
         res.status(201).json(userShoppingList);
     }
     catch (error) {
-        next(error); // Pass the error to the error-handling 
+        next(error); // Pass the error to the error-handling
     }
 }));
 // Edit a shopping list
-router.put('/shopping-lists/:listId', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.put("/shopping-lists/:listId", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { listId } = req.params;
     const { name } = req.body;
     try {
@@ -73,7 +77,7 @@ router.put('/shopping-lists/:listId', (req, res, next) => __awaiter(void 0, void
     }
 }));
 // Get all items in a shopping list
-router.get('/shopping-lists/:listId/items', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/shopping-lists/:listId/items", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { listId } = req.params;
     try {
         const items = yield db_1.prisma.item.findMany({
@@ -86,9 +90,9 @@ router.get('/shopping-lists/:listId/items', (req, res, next) => __awaiter(void 0
     }
 }));
 // Get shopping list details along with items
-router.get('/shopping-lists/:listId', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/shopping-lists/:listId", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { listId } = req.params;
-    console.log('listId:', listId);
+    console.log("listId:", listId);
     try {
         const shoppingList = yield db_1.prisma.shoppingList.findUnique({
             where: { id: listId },
@@ -98,7 +102,7 @@ router.get('/shopping-lists/:listId', (req, res, next) => __awaiter(void 0, void
             res.status(200).json(shoppingList);
         }
         else {
-            res.status(404).json({ error: 'Shopping list not found' });
+            res.status(404).json({ error: "Shopping list not found" });
         }
     }
     catch (error) {
@@ -107,7 +111,7 @@ router.get('/shopping-lists/:listId', (req, res, next) => __awaiter(void 0, void
     }
 }));
 // Get all users a specific shopping list is shared with
-router.get('/shopping-lists/:listId/shared-users', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/shopping-lists/:listId/shared-users", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { listId } = req.params;
     try {
         const users = yield db_1.prisma.user.findMany({
@@ -127,7 +131,7 @@ router.get('/shopping-lists/:listId/shared-users', (req, res, next) => __awaiter
     }
 }));
 // Delete a specific shopping list by ID
-router.delete('/shopping-lists/:listId', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete("/shopping-lists/:listId", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { listId } = req.params;
     try {
         console.log(`Deleting user shopping list links for shopping list with ID ${listId}`);
