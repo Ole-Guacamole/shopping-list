@@ -6,7 +6,7 @@ declare module 'express-serve-static-core' {
   }
 }
 
-// declare module 'bcrypt';
+declare module 'bcrypt';
 
 // declare namespace Express {
 //   interface IUser {
